@@ -13,10 +13,10 @@ function CrtRenderer() {
       <PerspectiveCamera makeDefault position={[0, 2, 6]} fov={65} />
       <Suspense fallback={null}>
         <Environment
-          preset="forest"
-          backgroundBlurriness={1}
-          backgroundIntensity={3}
-          environmentIntensity={0.5}
+          files="/textures/grass/illus_sky.hdr"
+          backgroundIntensity={2}
+          environmentIntensity={1}
+          background
         />
         <Scene />
       </Suspense>

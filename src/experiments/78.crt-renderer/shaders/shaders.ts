@@ -4,6 +4,19 @@ precision highp float;
 uniform float uColorNum;
 uniform float uPixelSize;
 
+uniform float uTime;
+
+uniform float uNoiseIntensity;
+
+uniform float uWarpStrength;
+
+uniform float uScanlineIntensity;
+uniform float uScanlineFrequency;
+
+float random(vec2 c) {
+  return fract(sin(dot(c.xy, vec2(12.9898, 78.233))) * 43758.5453);
+}
+
 const float bayerMatrix8x8[64] = float[64](
     0.0/ 64.0, 48.0/ 64.0, 12.0/ 64.0, 60.0/ 64.0,  3.0/ 64.0, 51.0/ 64.0, 15.0/ 64.0, 63.0/ 64.0,
   32.0/ 64.0, 16.0/ 64.0, 44.0/ 64.0, 28.0/ 64.0, 35.0/ 64.0, 19.0/ 64.0, 47.0/ 64.0, 31.0/ 64.0,
@@ -29,11 +42,27 @@ vec3 dither(vec2 uv, vec3 color) {
 }
 
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
+
   vec2 normalizeduPixelSize = uPixelSize / resolution;  
   vec2 uvPixel = normalizeduPixelSize * floor(uv / normalizeduPixelSize);
 
   vec4 color = texture2D(inputBuffer, uvPixel);
   color.rgb = dither(uvPixel, color.rgb);
+
+  // Add scanlines
+  float scanLine = sin(uv.y * uScanlineFrequency) * uScanlineIntensity;
+  color.rgb *= (1.0 - scanLine);
+
+
+  // Add noise
+  float noise = random(uv + uTime) * uNoiseIntensity;
+  color.rgb = mix(color.rgb, vec3(1.0), noise);
+
+  // Add vignette
+  vec2 vignetteUV = uv * (1.0 - uv.yx);
+  float vignette = vignetteUV.x * vignetteUV.y * 15.0;
+  vignette = pow(vignette, 0.25);
+  color.rgb *= vignette;
 
   outputColor = color;
 }

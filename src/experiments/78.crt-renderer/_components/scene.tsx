@@ -1,4 +1,4 @@
-import { OrbitControls, useGLTF } from '@react-three/drei'
+import { OrbitControls, PerspectiveCamera, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
 import { EffectComposer, wrapEffect } from '@react-three/postprocessing'
 import { useControls } from 'leva'
@@ -13,15 +13,20 @@ class CrtEffectImpl extends Effect {
     super('CrtEffect', fragment, {
       uniforms: new Map([
         ['uColorNum', new THREE.Uniform(4.0)],
-        ['uPixelSize', new THREE.Uniform(4.0)]
+        ['uPixelSize', new THREE.Uniform(4.0)],
+        ['uTime', new THREE.Uniform(0)],
+        ['uNoiseIntensity', new THREE.Uniform(0.15)],
+        ['uWarpStrength', new THREE.Uniform(0.75)],
+        ['uScanlineIntensity', new THREE.Uniform(0.1)],
+        ['uScanlineFrequency', new THREE.Uniform(1024.0)]
       ])
     })
   }
 
-  //   update(renderer: any, inputBuffer: any, deltaTime: number) {
-  //     // @ts-expect-error
-  //     this.uniforms.get('uTime').value += deltaTime
-  //   }
+  update(renderer: any, inputBuffer: any, deltaTime: number) {
+    // @ts-expect-error
+    this.uniforms.get('uTime').value += deltaTime
+  }
 }
 
 export const CrtEffect = wrapEffect(CrtEffectImpl)
@@ -32,13 +37,13 @@ export function Scene() {
 
   const { colorNum, pixelSize } = useControls({
     colorNum: {
-      value: 4.0,
+      value: 2.0,
       min: 2.0,
       max: 8.0,
       step: 2.0
     },
     pixelSize: {
-      value: 4.0,
+      value: 3.0,
       min: 1.0,
       max: 16.0,
       step: 2.0
@@ -58,10 +63,12 @@ export function Scene() {
     <>
       <OrbitControls />
 
+      <PerspectiveCamera makeDefault position={[1, 1, 2]} fov={65} />
+
       <ambientLight intensity={1} />
       <directionalLight position={10} intensity={3} />
 
-      <primitive object={scene} />
+      <primitive object={scene} position={[0, -0.5, 0]} />
 
       <EffectComposer>
         {/* @ts-expect-error */}
