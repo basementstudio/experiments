@@ -21,7 +21,7 @@ class CrtEffectImpl extends Effect {
         ['uTime', new THREE.Uniform(0)],
         ['uNoiseIntensity', new THREE.Uniform(0.15)],
         ['uWarpStrength', new THREE.Uniform(0.75)],
-        ['uScanlineIntensity', new THREE.Uniform(0.1)],
+        ['uScanlineIntensity', new THREE.Uniform(0.25)],
         ['uScanlineFrequency', new THREE.Uniform(1024.0)]
       ])
     })

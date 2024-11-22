@@ -41,28 +41,39 @@ vec3 dither(vec2 uv, vec3 color) {
   return color;
 }
 
+
+const float curve = 0.25;
+
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
+  vec2 curveUV = uv * 2.0 - 1.0;
+  vec2 offset = curveUV.yx * curve;
+  curveUV += curveUV * offset * offset;
+  curveUV = curveUV * 0.5 + 0.5;
+
 
   vec2 normalizeduPixelSize = uPixelSize / resolution;  
-  vec2 uvPixel = normalizeduPixelSize * floor(uv / normalizeduPixelSize);
+  vec2 uvPixel = normalizeduPixelSize * floor(curveUV / normalizeduPixelSize);
 
   vec4 color = texture2D(inputBuffer, uvPixel);
   color.rgb = dither(uvPixel, color.rgb);
 
   // Add scanlines
-  float scanLine = sin(uv.y * uScanlineFrequency) * uScanlineIntensity;
+  float scanLine = sin(curveUV.y * uScanlineFrequency) * uScanlineIntensity;
   color.rgb *= (1.0 - scanLine);
 
-
   // Add noise
-  float noise = random(uv + uTime) * uNoiseIntensity;
+  float noise = random(curveUV + uTime) * uNoiseIntensity;
   color.rgb = mix(color.rgb, vec3(1.0), noise);
 
   // Add vignette
-  vec2 vignetteUV = uv * (1.0 - uv.yx);
+  vec2 vignetteUV = curveUV * (1.0 - curveUV.yx);
   float vignette = vignetteUV.x * vignetteUV.y * 15.0;
   vignette = pow(vignette, 0.25);
   color.rgb *= vignette;
+
+  vec2 edge = smoothstep(0., 0.005, curveUV)*(1.-smoothstep(1.-0.005, 1., curveUV));
+  color.rgb *= edge.x * edge.y;
+
 
   outputColor = color;
 }
