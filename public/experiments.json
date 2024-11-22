@@ -1,12 +1,30 @@
 [
   {
+    "filename": "78.crt-renderer",
+    "title": "Crt renderer.",
+    "href": "/experiments/78.crt-renderer",
+    "tags": [],
+    "og": null,
+    "number": 78,
+    "contributors": []
+  },
+  {
     "filename": "77.instanced-grass",
     "title": "Instanced grass.",
     "href": "/experiments/77.instanced-grass",
     "tags": [],
     "og": null,
     "number": 77,
-    "contributors": []
+    "contributors": [
+      {
+        "id": "MDQ6VXNlcjgyODQ0NDQ4",
+        "url": "https://github.com/git-chad",
+        "name": "Tobi Moccagatta",
+        "avatarUrl": "https://avatars.githubusercontent.com/u/82844448?u=c71fc101623e8d32861d8512f379b06a3378606f&v=4",
+        "email": "tobimocc@gmail.com",
+        "company": "Set & Forget"
+      }
+    ]
   },
   {
     "filename": "76.butterfly-particle-sphere",
