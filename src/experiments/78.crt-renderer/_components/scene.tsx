@@ -1,5 +1,5 @@
 import { OrbitControls } from '@react-three/drei'
-import { Bloom, EffectComposer, wrapEffect } from '@react-three/postprocessing'
+import { EffectComposer, wrapEffect } from '@react-three/postprocessing'
 import { Effect } from 'postprocessing'
 import { Uniform } from 'three'
 
@@ -12,8 +12,9 @@ class CrtEffectImpl extends Effect {
         ['uTime', new Uniform(0)],
         ['uNoiseIntensity', new Uniform(0.15)],
         ['uWarpStrength', new Uniform(0.75)],
-        ['uScanlineIntensity', new Uniform(0.1)],
-        ['uScanlineFrequency', new Uniform(128.0)]
+        ['uScanlineFrequency', new Uniform(128.0)],
+        ['uScanlineIntensity', new Uniform(0.05)],
+        ['uScanlineFrequency', new Uniform(2048.0)]
       ])
     })
   }
@@ -57,7 +58,6 @@ export function Scene() {
       </group>
 
       <EffectComposer>
-        <Bloom mipmapBlur intensity={1.5} luminanceThreshold={0.8} />
         {/* @ts-expect-error */}
         <CrtEffect />
       </EffectComposer>

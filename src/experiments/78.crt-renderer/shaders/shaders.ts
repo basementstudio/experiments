@@ -27,9 +27,11 @@ export const fragment = /* glsl */ `
             return;
         }
 
+        vec4 color = inputColor;
+
         // Add scanlines
         float scanLine = sin(warpedUv.y * uScanlineFrequency) * uScanlineIntensity;
-        vec4 color = inputColor;
+        color = inputColor;
         color.rgb -= scanLine;
 
         // Add noise
