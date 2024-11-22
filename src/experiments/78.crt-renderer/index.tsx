@@ -1,9 +1,11 @@
 'use client'
 
-import { PerspectiveCamera } from '@react-three/drei'
+import { Environment, PerspectiveCamera } from '@react-three/drei'
 import { Suspense } from 'react'
 
 import { R3FCanvasLayout } from '~/components/layout/r3f-canvas-layout'
+
+import { Scene } from './_components/scene'
 
 function CrtRenderer() {
   return (
@@ -13,7 +15,16 @@ function CrtRenderer() {
         position={[-8.544, -0.922, 9.638]}
         fov={65}
       />
-      <Suspense fallback={null}></Suspense>
+      <Suspense fallback={null}>
+        <Environment
+          preset="city"
+          backgroundBlurriness={1}
+          backgroundIntensity={3}
+          environmentIntensity={2}
+          background
+        />
+        <Scene />
+      </Suspense>
     </>
   )
 }
