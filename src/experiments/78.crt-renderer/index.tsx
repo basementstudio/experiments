@@ -10,11 +10,7 @@ import { Scene } from './_components/scene'
 function CrtRenderer() {
   return (
     <>
-      <PerspectiveCamera
-        makeDefault
-        position={[-8.544, -0.922, 9.638]}
-        fov={65}
-      />
+      <PerspectiveCamera makeDefault position={[0, 2, 6]} fov={65} />
       <Suspense fallback={null}>
         <Environment
           preset="city"

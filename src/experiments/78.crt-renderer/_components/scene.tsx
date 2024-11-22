@@ -1,11 +1,10 @@
 import { OrbitControls } from '@react-three/drei'
 import { EffectComposer, wrapEffect } from '@react-three/postprocessing'
 import { Effect } from 'postprocessing'
-import React, { forwardRef } from 'react'
 
 import { fragment } from '../shaders/shaders'
 
-class CrtEffect extends Effect {
+class CrtEffectImpl extends Effect {
   constructor() {
     super('CrtEffect', fragment, {
       uniforms: new Map([])
@@ -13,24 +12,21 @@ class CrtEffect extends Effect {
   }
 }
 
-const CrtMonitorEffect = wrapEffect(CrtEffect)
-
-const CrtMonitorEffectComponent = forwardRef((props, ref) => (
-  <primitive ref={ref} object={CrtMonitorEffect} {...props} />
-))
+export const CrtEffect = wrapEffect(CrtEffectImpl)
 
 export function Scene() {
   return (
     <>
       <OrbitControls />
 
-      <mesh scale={2}>
-        <boxGeometry />
+      <mesh receiveShadow castShadow scale={2}>
+        <sphereGeometry args={[1, 64, 64]} />
         <meshStandardMaterial color="skyblue" />
       </mesh>
 
       <EffectComposer>
-        <CrtMonitorEffectComponent />
+        {/* @ts-expect-error */}
+        <CrtEffect />
       </EffectComposer>
     </>
   )
