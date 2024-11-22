@@ -13,11 +13,10 @@ function CrtRenderer() {
       <PerspectiveCamera makeDefault position={[0, 2, 6]} fov={65} />
       <Suspense fallback={null}>
         <Environment
-          preset="city"
+          preset="forest"
           backgroundBlurriness={1}
           backgroundIntensity={3}
-          environmentIntensity={2}
-          background
+          environmentIntensity={0.5}
         />
         <Scene />
       </Suspense>
