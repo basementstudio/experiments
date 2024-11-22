@@ -18,6 +18,7 @@ class CrtEffectImpl extends Effect {
       uniforms: new Map([
         ['uColorNum', new THREE.Uniform(4.0)],
         ['uPixelSize', new THREE.Uniform(4.0)],
+        ['uThresholdOffset', new THREE.Uniform(8)],
         ['uTime', new THREE.Uniform(0)],
         ['uNoiseIntensity', new THREE.Uniform(0.15)],
         ['uWarpStrength', new THREE.Uniform(0.75)],
@@ -39,7 +40,7 @@ export function Scene() {
   const crtEffect = useRef<CrtEffectImpl>(null)
   const { scene } = useGLTF('/models/monitor.glb')
 
-  const { colorNum, pixelSize } = useControls({
+  const { colorNum, pixelSize, thresholdOffset } = useControls({
     colorNum: {
       value: 2.0,
       min: 2.0,
@@ -49,6 +50,12 @@ export function Scene() {
     pixelSize: {
       value: 3.0,
       min: 1.0,
+      max: 16.0,
+      step: 1.0
+    },
+    thresholdOffset: {
+      value: 8,
+      min: 0,
       max: 16.0,
       step: 1.0
     }
@@ -61,6 +68,8 @@ export function Scene() {
     crtEffect.current.uniforms.get('uColorNum').value = colorNum
     // @ts-expect-error
     crtEffect.current.uniforms.get('uPixelSize').value = pixelSize
+    // @ts-expect-error
+    crtEffect.current.uniforms.get('uThresholdOffset').value = thresholdOffset
   })
 
   return (
@@ -75,6 +84,7 @@ export function Scene() {
       <primitive object={scene} position={[0, -0.5, 0]} />
 
       <EffectComposer>
+        {/* @ts-expect-error */}
         <ChromaticAberration offset={[0.0025, 0.0025]} />
         {/* @ts-expect-error */}
         <CrtEffect ref={crtEffect} />
