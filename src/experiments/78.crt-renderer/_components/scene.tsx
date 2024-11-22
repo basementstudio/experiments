@@ -1,6 +1,10 @@
 import { OrbitControls, PerspectiveCamera, useGLTF } from '@react-three/drei'
 import { useFrame } from '@react-three/fiber'
-import { EffectComposer, wrapEffect } from '@react-three/postprocessing'
+import {
+  ChromaticAberration,
+  EffectComposer,
+  wrapEffect
+} from '@react-three/postprocessing'
 import { useControls } from 'leva'
 import { Effect } from 'postprocessing'
 import { useRef } from 'react'
@@ -40,13 +44,13 @@ export function Scene() {
       value: 2.0,
       min: 2.0,
       max: 8.0,
-      step: 2.0
+      step: 1.0
     },
     pixelSize: {
       value: 3.0,
       min: 1.0,
       max: 16.0,
-      step: 2.0
+      step: 1.0
     }
   })
 
@@ -71,10 +75,9 @@ export function Scene() {
       <primitive object={scene} position={[0, -0.5, 0]} />
 
       <EffectComposer>
+        <ChromaticAberration offset={[0.0025, 0.0025]} />
         {/* @ts-expect-error */}
         <CrtEffect ref={crtEffect} />
-
-        {/* <Bloom intensity={1} /> */}
       </EffectComposer>
     </>
   )
