@@ -3,6 +3,7 @@ precision highp float;
 
 uniform float uColorNum;
 uniform float uPixelSize;
+uniform int uThresholdOffset;
 
 uniform float uTime;
 
@@ -55,7 +56,7 @@ const float bayerMatrix8x8[64] = float[64](
 vec3 dither(vec2 uv, vec3 color) {
   int x = int(uv.x * resolution.x) % 8;
   int y = int(uv.y * resolution.y) % 8;
-  float threshold = bayerMatrix8x8[y * 8 + x] - 1.0;
+  float threshold = bayerMatrix8x8[y * uThresholdOffset + x] - 1.0;
 
   color.rgb += threshold;
   color.r = floor(color.r * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
