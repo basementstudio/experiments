@@ -1,43 +1,58 @@
 export const fragment = /* glsl */ `
-    uniform float uTime;
+uniform sampler2D uBNoise;
 
-    uniform float uNoiseIntensity;
+precision highp float;
 
-    uniform float uWarpStrength;
+float random(vec2 c) {
+    return fract(sin(dot(c.xy, vec2(12.9898, 78.233))) * 43758.5453);
+  }
+  
+  vec3 basicDither(vec2 uv, float lum) {
+    vec3 color = vec3(0.0);
+  
+    if (lum < random(uv)) {
+        color = vec3(0.0);
+    } else {
+        color = vec3(1.0);
+    }
+  
+    return color;
+  }
 
-    uniform float uScanlineIntensity;
-    uniform float uScanlineFrequency;
+  const mat4x4 bayerMatrix4x4 = mat4x4(
+    0.0,  8.0,  2.0, 10.0,
+    12.0, 4.0,  14.0, 6.0,
+    3.0,  11.0, 1.0, 9.0,
+    15.0, 7.0,  13.0, 5.0) / 16.0;
+  
+  vec3 orderedDither(vec2 uv, float lum) {
+    vec3 color = vec3(0.0);
+    float threshold = 0.0;
 
+    int x = int(uv.x * resolution.x) % 4;
+    int y = int(uv.y * resolution.y) % 4;
 
-    // Add noise function
-    float random(vec2 st) {
-        return fract(sin(dot(st.xy, vec2(12.9898,78.233))) * 43758.5453123);
+    threshold = bayerMatrix4x4[x][y];
+    
+    if (lum < threshold) {
+        color = vec3(0.0);
+    } else {
+        color = vec3(1.0);
     }
 
-    void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
+    return color;
+  }
 
-        // warp the uv
-        vec2 dc = abs(0.5-uv);
-        dc *= dc;
-        vec2 warpedUv = uv;
-        warpedUv.x -= 0.5; warpedUv.x *= 1.0+(dc.y*(0.3*uWarpStrength)); warpedUv.x += 0.5;
-        warpedUv.y -= 0.5; warpedUv.y *= 1.0+(dc.x*(0.4*uWarpStrength)); warpedUv.y += 0.5;
-        if (warpedUv.y > 1.0 || warpedUv.x < 0.0 || warpedUv.x > 1.0 || warpedUv.y < 0.0) {
-            outputColor = vec4(0.0,0.0,0.0,1.0);
-            return;
-        }
+  float bias = 0.15;
 
-        vec4 color = inputColor;
 
-        // Add scanlines
-        float scanLine = sin(warpedUv.y * uScanlineFrequency) * uScanlineIntensity;
-        color = inputColor;
-        color.rgb -= scanLine;
 
-        // Add noise
-        float noise = random(uv + uTime) * uNoiseIntensity;
-        color.rgb += noise;
-
-        outputColor = color;
-    }
+  void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
+    vec4 color = texture2D(inputBuffer, uv);
+  
+    float lum = dot(vec3(0.2126, 0.7152, 0.0722), color.rgb);
+    color.rgb = basicDither(uv, lum);
+  
+    outputColor = color;
+  }
 `
