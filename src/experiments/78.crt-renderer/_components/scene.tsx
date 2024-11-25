@@ -46,7 +46,7 @@ export const CrtEffect = wrapEffect(CrtEffectImpl)
 
 export function Scene() {
   const crtEffect = useRef<CrtEffectImpl>(null)
-  const { scene } = useGLTF('/models/carpenter.glb')
+  const { scene } = useGLTF('/models/monitor.glb')
 
   const {
     colorNum,

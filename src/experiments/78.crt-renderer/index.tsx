@@ -2,6 +2,7 @@
 
 import { Environment, PerspectiveCamera } from '@react-three/drei'
 import { Suspense } from 'react'
+import { SRGBColorSpace } from 'three'
 
 import { R3FCanvasLayout } from '~/components/layout/r3f-canvas-layout'
 
@@ -24,8 +25,20 @@ function CrtRenderer() {
   )
 }
 
-CrtRenderer.Layout = R3FCanvasLayout
 CrtRenderer.Title = 'CRT Renderer'
 CrtRenderer.Description = 'CRT Renderer'
+
+CrtRenderer.Layout = (props: any) => (
+  <R3FCanvasLayout
+    gl={{
+      antialias: false,
+      autoClear: false,
+      powerPreference: 'high-performance',
+      outputColorSpace: SRGBColorSpace,
+      pixelRatio: 1
+    }}
+    {...props}
+  />
+)
 
 export default CrtRenderer
