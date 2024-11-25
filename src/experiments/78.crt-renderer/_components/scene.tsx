@@ -46,7 +46,7 @@ export const CrtEffect = wrapEffect(CrtEffectImpl)
 
 export function Scene() {
   const crtEffect = useRef<CrtEffectImpl>(null)
-  const { scene } = useGLTF('/models/monitor.glb')
+  const { scene } = useGLTF('/models/carpenter.glb')
 
   const {
     colorNum,
@@ -124,7 +124,7 @@ export function Scene() {
       },
       monochromeColor: {
         value: '#ff8000',
-        render: (get) => get('isMonochrome'),
+        render: (get) => get('Color Mode.isMonochrome'),
         label: 'Color'
       }
     })
