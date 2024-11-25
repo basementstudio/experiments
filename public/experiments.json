@@ -6,7 +6,24 @@
     "tags": [],
     "og": null,
     "number": 78,
-    "contributors": []
+    "contributors": [
+      {
+        "id": "",
+        "url": "https://github.com/motiontx",
+        "name": "Vittorio Retrivi",
+        "avatarUrl": "https://avatars.githubusercontent.com/u/5198206?v=4",
+        "email": "vittorioretrivi@gmail.com",
+        "company": "@basementstudio"
+      },
+      {
+        "id": "MDQ6VXNlcjgyODQ0NDQ4",
+        "url": "https://github.com/git-chad",
+        "name": "Tobi Moccagatta",
+        "avatarUrl": "https://avatars.githubusercontent.com/u/82844448?u=c71fc101623e8d32861d8512f379b06a3378606f&v=4",
+        "email": "tobimocc@gmail.com",
+        "company": "@basementstudio"
+      }
+    ]
   },
   {
     "filename": "77.instanced-grass",
@@ -22,7 +39,7 @@
         "name": "Tobi Moccagatta",
         "avatarUrl": "https://avatars.githubusercontent.com/u/82844448?u=c71fc101623e8d32861d8512f379b06a3378606f&v=4",
         "email": "tobimocc@gmail.com",
-        "company": "Set & Forget"
+        "company": "@basementstudio"
       }
     ]
   },
