@@ -5,7 +5,7 @@ import {
   EffectComposer,
   wrapEffect
 } from '@react-three/postprocessing'
-import { useControls } from 'leva'
+import { folder, useControls } from 'leva'
 import { Effect } from 'postprocessing'
 import { useRef } from 'react'
 import * as THREE from 'three'
@@ -15,15 +15,23 @@ import { fragment } from '../shaders/shaders'
 class CrtEffectImpl extends Effect {
   constructor() {
     super('CrtEffect', fragment, {
-      uniforms: new Map([
+      uniforms: new Map<
+        string,
+        THREE.Uniform<number | boolean | THREE.Vector3>
+      >([
         ['uColorNum', new THREE.Uniform(4.0)],
         ['uPixelSize', new THREE.Uniform(4.0)],
         ['uThresholdOffset', new THREE.Uniform(8)],
         ['uTime', new THREE.Uniform(0)],
-        ['uNoiseIntensity', new THREE.Uniform(0.15)],
+        ['uNoiseIntensity', new THREE.Uniform(0.0)],
         ['uWarpStrength', new THREE.Uniform(0.75)],
         ['uScanlineIntensity', new THREE.Uniform(0.25)],
-        ['uScanlineFrequency', new THREE.Uniform(1024.0)]
+        ['uScanlineFrequency', new THREE.Uniform(1024.0)],
+        ['uIsMonochrome', new THREE.Uniform(false)],
+        [
+          'uMonochromeColor',
+          new THREE.Uniform(new THREE.Vector3(1.0, 0.5, 0.0))
+        ]
       ])
     })
   }
@@ -40,25 +48,86 @@ export function Scene() {
   const crtEffect = useRef<CrtEffectImpl>(null)
   const { scene } = useGLTF('/models/monitor.glb')
 
-  const { colorNum, pixelSize, thresholdOffset } = useControls({
-    colorNum: {
-      value: 2.0,
-      min: 2.0,
-      max: 8.0,
-      step: 1.0
-    },
-    pixelSize: {
-      value: 3.0,
-      min: 1.0,
-      max: 16.0,
-      step: 1.0
-    },
-    thresholdOffset: {
-      value: 8,
-      min: 0,
-      max: 16.0,
-      step: 1.0
-    }
+  const {
+    colorNum,
+    pixelSize,
+    thresholdOffset,
+    isMonochrome,
+    monochromeColor,
+    noiseIntensity,
+    warpStrength,
+    scanlineIntensity,
+    scanlineFrequency
+  } = useControls({
+    Pixelation: folder({
+      colorNum: {
+        value: 2.0,
+        min: 2.0,
+        max: 8.0,
+        step: 1.0,
+        label: 'Color Numbers'
+      },
+      pixelSize: {
+        value: 3.0,
+        min: 1.0,
+        max: 16.0,
+        step: 1.0,
+        label: 'Pixel Size'
+      },
+      thresholdOffset: {
+        value: 8,
+        min: 0,
+        max: 16.0,
+        step: 1.0,
+        label: 'Threshold Offset'
+      }
+    }),
+
+    'CRT Effects': folder({
+      noiseIntensity: {
+        value: 0.15,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        label: 'Noise Intensity'
+      },
+      warpStrength: {
+        value: 0.75,
+        min: 0,
+        max: 2,
+        step: 0.01,
+        label: 'Screen Warp'
+      }
+    }),
+
+    Scanlines: folder({
+      scanlineIntensity: {
+        value: 0.25,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        label: 'Intensity'
+      },
+      scanlineFrequency: {
+        value: 1024,
+        min: 100,
+        max: 2048,
+        step: 1,
+        label: 'Frequency'
+      }
+    }),
+
+    'Color Mode': folder({
+      isMonochrome: {
+        value: false,
+        label: 'Monochrome'
+      },
+      monochromeColor: {
+        value: '#ff8000',
+        render: (get) => get('isMonochrome'),
+        label: 'Color'
+      }
+    })
   })
 
   useFrame(() => {
@@ -70,6 +139,24 @@ export function Scene() {
     crtEffect.current.uniforms.get('uPixelSize').value = pixelSize
     // @ts-expect-error
     crtEffect.current.uniforms.get('uThresholdOffset').value = thresholdOffset
+    // @ts-expect-error
+    crtEffect.current.uniforms.get('uIsMonochrome').value = isMonochrome
+    // @ts-expect-error
+    crtEffect.current.uniforms.get('uNoiseIntensity').value = noiseIntensity
+    // @ts-expect-error
+    crtEffect.current.uniforms.get('uWarpStrength').value = warpStrength
+    // @ts-expect-error
+    crtEffect.current.uniforms.get('uScanlineIntensity').value =
+      scanlineIntensity
+    // @ts-expect-error
+    crtEffect.current.uniforms.get('uScanlineFrequency').value =
+      scanlineFrequency
+
+    const color = new THREE.Color(monochromeColor)
+    // @ts-expect-error
+    crtEffect.current.uniforms
+      .get('uMonochromeColor')
+      .value.set(color.r, color.g, color.b)
   })
 
   return (

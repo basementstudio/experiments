@@ -14,6 +14,9 @@ uniform float uWarpStrength;
 uniform float uScanlineIntensity;
 uniform float uScanlineFrequency;
 
+uniform bool uIsMonochrome;
+uniform vec3 uMonochromeColor;
+
 float random(vec2 c) {
   return fract(sin(dot(c.xy, vec2(12.9898, 78.233))) * 43758.5453);
 }
@@ -59,9 +62,16 @@ vec3 dither(vec2 uv, vec3 color) {
   float threshold = bayerMatrix8x8[y * uThresholdOffset + x] - 1.0;
 
   color.rgb += threshold;
-  color.r = floor(color.r * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
-  color.g = floor(color.g * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
-  color.b = floor(color.b * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
+  
+  if (uIsMonochrome) {
+    float gray = dot(color.rgb, vec3(0.299, 0.587, 0.114));
+    gray = floor(gray * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
+    color.rgb = gray * uMonochromeColor;
+  } else {
+    color.r = floor(color.r * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
+    color.g = floor(color.g * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
+    color.b = floor(color.b * (uColorNum - 1.0) + 0.5) / (uColorNum - 1.0);
+  }
 
   return color;
 }
