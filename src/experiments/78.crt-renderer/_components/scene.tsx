@@ -7,7 +7,7 @@ import {
 } from '@react-three/postprocessing'
 import { folder, useControls } from 'leva'
 import { Effect } from 'postprocessing'
-import { useRef } from 'react'
+import { useCallback, useRef } from 'react'
 import * as THREE from 'three'
 
 import { fragment } from '../shaders/shaders'
@@ -130,33 +130,44 @@ export function Scene() {
     })
   })
 
-  useFrame(() => {
+  const updateUniforms = useCallback(() => {
     if (!crtEffect.current) return
 
+    const uniforms = crtEffect.current.uniforms
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uColorNum').value = colorNum
+    uniforms.get('uColorNum').value = colorNum
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uPixelSize').value = pixelSize
+    uniforms.get('uPixelSize').value = pixelSize
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uThresholdOffset').value = thresholdOffset
+    uniforms.get('uThresholdOffset').value = thresholdOffset
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uIsMonochrome').value = isMonochrome
+    uniforms.get('uIsMonochrome').value = isMonochrome
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uNoiseIntensity').value = noiseIntensity
+    uniforms.get('uNoiseIntensity').value = noiseIntensity
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uWarpStrength').value = warpStrength
+    uniforms.get('uWarpStrength').value = warpStrength
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uScanlineIntensity').value =
-      scanlineIntensity
+    uniforms.get('uScanlineIntensity').value = scanlineIntensity
     // @ts-expect-error
-    crtEffect.current.uniforms.get('uScanlineFrequency').value =
-      scanlineFrequency
+    uniforms.get('uScanlineFrequency').value = scanlineFrequency
 
     const color = new THREE.Color(monochromeColor)
     // @ts-expect-error
-    crtEffect.current.uniforms
-      .get('uMonochromeColor')
-      .value.set(color.r, color.g, color.b)
+    uniforms.get('uMonochromeColor').value.set(color.r, color.g, color.b)
+  }, [
+    colorNum,
+    pixelSize,
+    thresholdOffset,
+    isMonochrome,
+    noiseIntensity,
+    warpStrength,
+    scanlineIntensity,
+    scanlineFrequency,
+    monochromeColor
+  ])
+
+  useFrame(() => {
+    updateUniforms()
   })
 
   return (
